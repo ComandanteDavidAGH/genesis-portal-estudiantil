@@ -63,13 +63,14 @@ st.markdown("""
     /* 4. Títulos Globales Estilizados */
     .titulo-seccion { color: #0d1b2a; font-family: 'Arial Black', sans-serif; border-bottom: 2px solid #d4af37; padding-bottom: 5px; }
 
-    /* 5. Camuflaje y visibilidad Ajustada de la Hamburguesa */
-    footer {visibility: hidden;}
-    header [data-testid="stToolbarShareButton"] {display: none !important;}
-    header [data-testid="stToolbarFavoriteButton"] {display: none !important;}
-    header a {display: none !important;}
-    header button[title="View source"] {display: none !important;}
-    header button[title="Deploy"] {display: none !important;}
+    /* 5. 🚫 OPERACIÓN FRANCOTIRADOR: FULMINAR AL GATO Y TOOLBAR CLOUD */
+    footer {visibility: hidden !important;}
+    [data-testid="stToolbarActions"] {display: none !important;}
+    [data-testid="stToolbarShareButton"] {display: none !important;}
+    .stActionButton {display: none !important;}
+    header a {display: none !important;} /* Aniquila el gato de GitHub */
+    
+    /* Mantener vivo el Menú Hamburguesa y el botón del Sidebar */
     #MainMenu {visibility: visible !important;}
     [data-testid="collapsedControl"] {visibility: visible !important;}
 </style>
