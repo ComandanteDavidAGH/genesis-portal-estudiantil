@@ -64,12 +64,15 @@ st.markdown("""
     /* 4. Títulos Globales Estilizados */
     .titulo-seccion { color: #0d1b2a; font-family: 'Arial Black', sans-serif; border-bottom: 2px solid #d4af37; padding-bottom: 5px; }
 
-    /* 5. 🚫 OPERACIÓN CAMUFLAJE (Eliminar Gato y Menú Streamlit) */
+    # EJEMPLO DE CÓMO SE VE TU CÓDIGO ACTUAL (No lo copies, búscalo)
+ocultar_elementos = """
+    <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
+    </style>
+"""
+st.markdown(ocultar_elementos, unsafe_allow_html=True)
 
 # =================================================================
 # 🔒 ENLACE AL BÚNKER DE DATOS (Supabase)
