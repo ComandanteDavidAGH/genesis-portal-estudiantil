@@ -14,7 +14,7 @@ if 'autenticado' not in st.session_state:
 if 'datos_alumno' not in st.session_state:
     st.session_state.datos_alumno = None
 
-# --- Inyección de Estilos Omega Pro y Recuperación de Menú Hamburguesa ---
+# --- Inyección de Estilos Omega Pro y Control de la Hamburguesa ---
 st.markdown("""
 <style>
     /* 1. Blindaje Principal y Contornos de Tabla */
@@ -63,19 +63,18 @@ st.markdown("""
     /* 4. Títulos Globales Estilizados */
     .titulo-seccion { color: #0d1b2a; font-family: 'Arial Black', sans-serif; border-bottom: 2px solid #d4af37; padding-bottom: 5px; }
 
-    /* 5. ⚙️ INYECCIÓN CSS: CAMUFLAJE Y VISIBILIDAD DE HAMBURGUESA */
-    footer {visibility: hidden;} /* Oculta logo de Streamlit abajo */
-    
-    /* 🚫 FULMINAR AL GATO Y BOTONES EXTRAS (Share, Star, Edit) */
+    /* 5. Camuflaje y visibilidad Ajustada de la Hamburguesa */
+    footer {visibility: hidden;}
     header [data-testid="stToolbarShareButton"] {display: none !important;}
     header [data-testid="stToolbarFavoriteButton"] {display: none !important;}
-    header a {display: none !important;} /* Elimina el enlace directo a GitHub */
+    header a {display: none !important;}
     header button[title="View source"] {display: none !important;}
     header button[title="Deploy"] {display: none !important;}
-    
-    /* Mantener viva la Hamburguesa */
-    #MainMenu {visibility: visible;}
-    [data-testid="collapsedControl"] {visibility: visible;}
+    #MainMenu {visibility: visible !important;}
+    [data-testid="collapsedControl"] {visibility: visible !important;}
+</style>
+""", unsafe_allow_html=True)
+
 # =================================================================
 # 🔒 ENLACE AL BÚNKER DE DATOS (Supabase)
 # =================================================================
@@ -98,7 +97,6 @@ def mostrar_login(supabase):
     
     with col2:
         st.markdown("<br><br>", unsafe_allow_html=True)
-        # --- 🛡️ INYECCIÓN DEL ESCUDO EN EL LOGIN ---
         st.markdown("""
         <div style='text-align: center; margin-bottom: 10px;'>
             <img src="https://raw.githubusercontent.com/ComandanteDavidAGH/genesis-portal-estudiantil/main/escudo.png" width="140" style="filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.3));">
@@ -337,7 +335,6 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-        # --- ENRUTADOR DE SECCIONES ---
         if menu_principal == "Mi Boletín": seccion_boletin(supabase)
         elif menu_principal == "Descargas": seccion_descargas()
         elif menu_principal == "Avisos": seccion_avisos()
