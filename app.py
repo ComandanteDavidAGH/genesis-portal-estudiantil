@@ -13,6 +13,7 @@ def iniciar_conexion():
 
 def ejecutar():
     # 🚀 MOTOR VISUAL PREMIUM CON CONTORNOS INTEGRADOS
+    st.markdown("""
     <style>
     [data-testid="stDataFrame"] {
         border-left: 3px solid #0d1b2a !important;
@@ -49,7 +50,6 @@ def ejecutar():
     .hud-value-red { color: #ff3333; }
     </style>
     """, unsafe_allow_html=True)
-
     # ==========================================
     # 🎓 ENCABEZADO DEL PORTAL ESTUDIANTIL
     # ==========================================
