@@ -28,16 +28,17 @@ def ejecutar():
     .hud-box {
         background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%);
         border-left: 5px solid #d4af37;
-        padding: 15px; border-radius: 8px; display: flex;
-        justify-content: space-around; align-items: center;
+        padding: 15px; border-radius: 8px; 
+        display: grid; 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 15px;
         box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 20px;
     }
-    .hud-item { text-align: center; }
-    .hud-title { font-size: 12px; color: #a8b2d1; font-family: 'Arial Black', sans-serif; text-transform: uppercase; margin: 0; }
-    .hud-value { font-size: 22px; color: #ffffff; font-weight: 900; margin: 0; font-family: Arial, sans-serif; }
-    .hud-value-gold { color: #d4af37; }
-    .hud-value-green { color: #00ff66; }
-    .hud-value-red { color: #ff3333; }
+    .hud-item { 
+        text-align: center; 
+        border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .hud-item:last-child { border-right: none; }
     </style>
     """, unsafe_allow_html=True)
 
