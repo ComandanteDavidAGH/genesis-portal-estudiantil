@@ -65,12 +65,17 @@ st.markdown("""
 
     /* 5. ⚙️ INYECCIÓN CSS: CAMUFLAJE Y VISIBILIDAD DE HAMBURGUESA */
     footer {visibility: hidden;} /* Oculta logo de Streamlit abajo */
-    #MainMenu {visibility: visible;} /* Recupera Hamburguesa */
+    
+    /* 🚫 FULMINAR AL GATO Y BOTONES EXTRAS (Share, Star, Edit) */
+    header [data-testid="stToolbarShareButton"] {display: none !important;}
+    header [data-testid="stToolbarFavoriteButton"] {display: none !important;}
+    header a {display: none !important;} /* Elimina el enlace directo a GitHub */
+    header button[title="View source"] {display: none !important;}
+    header button[title="Deploy"] {display: none !important;}
+    
+    /* Mantener viva la Hamburguesa */
+    #MainMenu {visibility: visible;}
     [data-testid="collapsedControl"] {visibility: visible;}
-    .stDeployButton {display:none;} /* Oculta botón de Deploy */
-</style>
-""", unsafe_allow_html=True)
-
 # =================================================================
 # 🔒 ENLACE AL BÚNKER DE DATOS (Supabase)
 # =================================================================
