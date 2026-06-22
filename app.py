@@ -71,7 +71,8 @@ def ejecutar():
             try:
                 # 📡 ESCÁNER 1: Buscamos al estudiante por su documento/ID en data_estudiantes
                 # Nota: Si tu columna en Supabase se llama diferente (ej: 'id', 'cedula'), cambia "Documento" por ese nombre
-                res_estudiante = supabase.table("data_estudiantes").select("Nombre_Completo, Grado").eq("Documento", documento_ingresado).execute()
+                # Esta línea extrae TODO sobre el estudiante: su nombre, su grado y todas sus materias con notas
+                respuesta_bd = supabase.table("data_estudiantes").select("Nombre_Completo, Grado, Grupo, Materia, P1, P2, P3, P4").eq("ID_Estudiante", documento_ingresado).execute()
                 alumno_data = res_estudiante.data
             except Exception as e:
                 st.error(f"🚨 Error en el escáner de identidad: {e}")
