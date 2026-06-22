@@ -69,7 +69,7 @@ def ejecutar():
         with st.spinner("Verificando credenciales en el búnker central..."):
             try:
                 # 📡 ESCÁNER 1: Buscamos al estudiante por su ID exacto
-                res_estudiante = supabase.table("data_estudiantes").select("Nombre_Completo, Grado").eq("ID_Estudiante", documento_ingresado).execute()
+                res_estudiante = supabase.table("data_estudiantes").select("Nombre_Completo, Grado").ilike("ID_Estudiante", f"%{documento_ingresado}%").execute()
                 alumno_data = res_estudiante.data
             except Exception as e:
                 st.error(f"🚨 Error en el escáner de identidad: {e}")
@@ -97,7 +97,7 @@ def ejecutar():
                 
                 # PLAN B: Si no hay notas consolidadas, sacamos las notas preliminares de data_estudiantes (lo que vi en tus fotos)
                 if not datos_notas:
-                    res_respaldo = supabase.table("data_estudiantes").select("*").eq("ID_Estudiante", documento_ingresado).execute()
+                    res_respaldo = supabase.table("data_estudiantes").select("*").ilike("ID_Estudiante", f"%{documento_ingresado}%").execute()
                     datos_notas = res_respaldo.data
 
             except Exception as e:
