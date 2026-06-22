@@ -330,16 +330,11 @@ def main():
         if st.sidebar.button("Cerrar Sesión", type="secondary", use_container_width=True):
             cerrar_sesion()
 
-        # FOOTER 2026
+        # 🏛️ FOOTER 2026 SANITIZADO Y BLINDADO
         st.sidebar.markdown(f"""
         <div style="position: fixed; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #6c757d;">
-            © Agroaéreo Táctico 2026<br>Génesis v1.0.Omega
+            &copy; Agroa&eacute;reo T&aacute;ctico 2026<br>G&eacute;nesis v1.0.Omega
         </div>
         """, unsafe_allow_html=True)
-
-        if menu_principal == "Mi Boletín": seccion_boletin(supabase)
-        elif menu_principal == "Descargas": seccion_descargas()
-        elif menu_principal == "Avisos": seccion_avisos()
-
 if __name__ == "__main__":
     main()
