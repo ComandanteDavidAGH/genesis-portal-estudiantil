@@ -173,6 +173,8 @@ def seccion_boletin(supabase):
     
     # 🧮 CÓMPUTO DE RENDIMIENTO VIP HÚD
     promedio_general = df_notas['PROMEDIO'].mean()
+    # TÁCTICA: Redondeamos el número ANTES de meterlo al HTML
+    promedio_redondeado = round(promedio_general, 1) 
     materias_aprobadas = len(df_notas[df_notas['PROMEDIO'] >= 6.0])
     total_materias = len(df_notas)
     
@@ -182,7 +184,7 @@ def seccion_boletin(supabase):
     st.markdown(f"""
     <div class="hud-box">
         <div class="hud-item"><p class="hud-title">Periodo Académico</p><p class="hud-value hud-value-gold">OFICIAL</p></div>
-        <div class="hud-item"><p class="hud-title">Tu Promedio Anual</p><p class="hud-value {color_promedio}">{promedio_general:.1f}</p></div>
+        <div class="hud-item"><p class="hud-title">Tu Promedio Anual</p><p class="hud-value {color_promedio}">{promedio_redondeado}</p></div>
         <div class="hud-item"><p class="hud-title">Asignaturas Aprobadas</p><p class="hud-value">{materias_aprobadas} / {total_materias}</p></div>
     </div>
     """, unsafe_allow_html=True)
