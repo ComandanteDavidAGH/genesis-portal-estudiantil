@@ -206,50 +206,42 @@ def seccion_boletin(supabase):
     st.dataframe(df_pintado, use_container_width=True, hide_index=True)
 
 # =================================================================
-# 📄 MÓDULO 2: ZONA DE DOCUMENTOS (Visualización Móvil Perfecta)
+# 🔔 MÓDULO 3: TABLERO DE AVISOS Y COMUNICADOS (A prueba de errores)
 # =================================================================
-def seccion_descargas():
-    st.markdown("<h2 class='titulo-seccion'>📄 Zona de Documentos</h2>", unsafe_allow_html=True)
+def seccion_avisos():
+    st.markdown("<h2 class='titulo-seccion'>🔔 Comunicados de Rectoría</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #6c757d; font-size: 14px;'>Información de última hora y directrices institucionales.</p>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     
-    col1, col2 = st.columns(2)
-    
-    with col1:
+    with st.container(border=True):
         st.markdown("""
-        <div style='background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%); padding:20px; border-radius:8px; border-left:5px solid #d4af37; text-align:center; box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 10px;'>
-            <h3 style='color:#d4af37; font-family:Arial Black; font-size:16px; margin-top:0;'>📕 MANUAL DE CONVIVENCIA</h3>
-            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Documento oficial. Derechos y deberes del estudiante.</p>
+        <div style="border-left: 5px solid #ff3333; padding-left: 10px;">
+            <h4 style="margin: 0; color: #0d1b2a;">&#x1F534; URGENTE: Asamblea General de Padres</h4>
+            <p style="margin-top: 5px; font-size: 14px;"><b>Fecha:</b> Viernes, 10 de Julio de 2026 | <b>Hora:</b> 6:30 AM.<br>
+            Se requiere asistencia de carácter obligatorio para socializar los resultados del periodo anterior.</p>
         </div>
         """, unsafe_allow_html=True)
         
-        # VISUALIZADOR DESPLEGABLE (Perfecto para celular)
-        with st.expander("👁️ Visualizar Puntos Clave"):
-            st.markdown("""
-            **Resumen de Convivencia 2026:**
-            * 🕒 **Horario de entrada:** 6:30 AM (Puerta cierra 6:45 AM).
-            * 👕 **Uniforme:** Obligatorio uso de uniforme de diario los lunes, miércoles y viernes. Sudadera para educación física.
-            * 📱 **Celulares:** Prohibido su uso durante las horas de clase sin autorización del docente.
-            * 🛑 **Faltas graves:** Plagio, agresión física o verbal, daño a la infraestructura.
-            """)
-            st.info("Para leer los 40 artículos completos, descarga el documento oficial.")
-            
-        # Botón de Descarga Real (Placeholder)
-        st.download_button(
-            label="⏬ Descargar PDF Completo",
-            data="Aqui_Ira_El_Archivo_PDF_En_El_Futuro",
-            file_name="Manual_Convivencia_2026.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-            
-    with col2:
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    with st.container(border=True):
         st.markdown("""
-        <div style='background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%); padding:20px; border-radius:8px; border-left:5px solid #d4af37; text-align:center; box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 10px;'>
-            <h3 style='color:#d4af37; font-family:Arial Black; font-size:16px; margin-top:0;'>📜 CRONOGRAMA 2026</h3>
-            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Fechas de exámenes, vacaciones y entregas.</p>
+        <div style="border-left: 5px solid #d4af37; padding-left: 10px;">
+            <h4 style="margin: 0; color: #0d1b2a;">&#x1F7E1; SIMULACRO DE EVALUACIONES OMR</h4>
+            <p style="margin-top: 5px; font-size: 14px;"><b>Objetivo:</b> Preparación para pruebas estandarizadas.<br>
+            La próxima semana se habilitará el uso de las nuevas hojas de respuesta OMR. Los estudiantes deben presentarse con lápiz Mirado No. 2 y borrador.</p>
         </div>
         """, unsafe_allow_html=True)
 
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    with st.container(border=True):
+        st.markdown("""
+        <div style="border-left: 5px solid #1a365d; padding-left: 10px;">
+            <h4 style="margin: 0; color: #0d1b2a;">&#x1F535; Plataforma Génesis Actualizada</h4>
+            <p style="margin-top: 5px; font-size: 14px;">Estimada comunidad, bienvenidos a la nueva interfaz del <b>Portal Académico Génesis v1.0 Omega</b>.</p>
+        </div>
+        """, unsafe_allow_html=True)
         # VISUALIZADOR DESPLEGABLE (Perfecto para celular)
         with st.expander("👁️ Visualizar Cronograma Aquí"):
             st.markdown("""
