@@ -194,35 +194,72 @@ def seccion_boletin(supabase):
     st.dataframe(df_pintado, use_container_width=True, hide_index=True)
 
 # =================================================================
-# 📄 MÓDULO 2: ZONA DE DESCARGAS (Estilo Premium 2026)
+# 📄 MÓDULO 2: ZONA DE DOCUMENTOS (Visualización Móvil Perfecta)
 # =================================================================
 def seccion_descargas():
-    st.markdown("<h2 class='titulo-seccion'>📄 Zona de Descargas</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='titulo-seccion'>📄 Zona de Documentos</h2>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        # Tarjeta con el estilo HUD (Azul Oscuro y Dorado)
         st.markdown("""
         <div style='background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%); padding:20px; border-radius:8px; border-left:5px solid #d4af37; text-align:center; box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 10px;'>
             <h3 style='color:#d4af37; font-family:Arial Black; font-size:16px; margin-top:0;'>📕 MANUAL DE CONVIVENCIA</h3>
-            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Documento oficial en PDF. Lineamientos institucionales.</p>
+            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Documento oficial. Derechos y deberes del estudiante.</p>
         </div>
         """, unsafe_allow_html=True)
-        # Botón de Descarga
-        st.button("⏬ Descargar Manual", key="btn_manual", use_container_width=True)
+        
+        # VISUALIZADOR DESPLEGABLE (Perfecto para celular)
+        with st.expander("👁️ Visualizar Puntos Clave"):
+            st.markdown("""
+            **Resumen de Convivencia 2026:**
+            * 🕒 **Horario de entrada:** 6:30 AM (Puerta cierra 6:45 AM).
+            * 👕 **Uniforme:** Obligatorio uso de uniforme de diario los lunes, miércoles y viernes. Sudadera para educación física.
+            * 📱 **Celulares:** Prohibido su uso durante las horas de clase sin autorización del docente.
+            * 🛑 **Faltas graves:** Plagio, agresión física o verbal, daño a la infraestructura.
+            """)
+            st.info("Para leer los 40 artículos completos, descarga el documento oficial.")
+            
+        # Botón de Descarga Real (Placeholder)
+        st.download_button(
+            label="⏬ Descargar PDF Completo",
+            data="Aqui_Ira_El_Archivo_PDF_En_El_Futuro",
+            file_name="Manual_Convivencia_2026.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
             
     with col2:
-        # Tarjeta con el estilo HUD (Azul Oscuro y Dorado)
         st.markdown("""
         <div style='background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%); padding:20px; border-radius:8px; border-left:5px solid #d4af37; text-align:center; box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 10px;'>
             <h3 style='color:#d4af37; font-family:Arial Black; font-size:16px; margin-top:0;'>📜 CRONOGRAMA 2026</h3>
-            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Fechas de exámenes, vacaciones y entrega de boletines.</p>
+            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Fechas de exámenes, vacaciones y entregas.</p>
         </div>
         """, unsafe_allow_html=True)
-        # Botón de Descarga
-        st.button("⏬ Descargar Cronograma", key="btn_crono", use_container_width=True)
+
+        # VISUALIZADOR DESPLEGABLE (Perfecto para celular)
+        with st.expander("👁️ Visualizar Cronograma Aquí"):
+            st.markdown("""
+            **📅 PRIMER PERIODO (Febrero - Abril)**
+            * **Inicio de clases:** 2 de Febrero
+            * **Exámenes Intermedios:** 15 al 19 de Marzo
+            * **Cierre de Periodo:** 23 de Abril
+
+            **📅 SEGUNDO PERIODO (Mayo - Julio)**
+            * **Inicio:** 3 de Mayo
+            * **Vacaciones Mitad de Año:** 15 de Junio al 5 de Julio
+            * **Cierre de Periodo:** 30 de Julio
+            """)
+        
+        # Botón de Descarga Real (Placeholder)
+        st.download_button(
+            label="⏬ Descargar PDF Completo",
+            data="Aqui_Ira_El_Archivo_PDF_En_El_Futuro",
+            file_name="Cronograma_Academico_2026.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
 # =================================================================
 # 🔔 MÓDULO 3: AVISOS (Placeholders)
 # =================================================================
