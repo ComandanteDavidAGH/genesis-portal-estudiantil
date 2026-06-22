@@ -50,8 +50,8 @@ def ejecutar():
 
     try:
         supabase = iniciar_conexion()
-    except Exception:
-        st.error("🚨 Falla en el enlace satelital con Supabase.")
+    except Exception as e:
+        st.error(f"🚨 Falla en el enlace satelital con Supabase. ERROR REAL: {e}")
         return
 
     # 🔑 PASO 1: BÚNKER DE ACCESO POR DOCUMENTO
