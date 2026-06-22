@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from supabase import create_client
 import time
+import base64 # 🚀 NUEVA ARMA TÁCTICA PARA EXTRAER IMÁGENES
 
 # =================================================================
 # 🔒 CONFIGURACIÓN CRÍTICA Y BLINDAJE VISUAL
@@ -13,6 +14,19 @@ if 'autenticado' not in st.session_state:
     st.session_state.autenticado = False
 if 'datos_alumno' not in st.session_state:
     st.session_state.datos_alumno = None
+
+# --- 🛡️ MOTOR DE CARGA LOCAL DE IMÁGENES (Bypass para repositorios privados) ---
+@st.cache_data
+def cargar_escudo_local():
+    try:
+        with open("escudo.png", "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+        return f"data:image/png;base64,{encoded_string}"
+    except Exception:
+        # Si no encuentra el archivo, devuelve un pixel transparente temporal
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+
+escudo_seguro = cargar_escudo_local()
 
 # --- Inyección de Estilos Omega Pro y Control de la Hamburguesa ---
 st.markdown("""
@@ -68,11 +82,21 @@ st.markdown("""
     [data-testid="stToolbarActions"] {display: none !important;}
     [data-testid="stToolbarShareButton"] {display: none !important;}
     .stActionButton {display: none !important;}
-    header a {display: none !important;} /* Aniquila el gato de GitHub */
-    
-    /* Mantener vivo el Menú Hamburguesa y el botón del Sidebar */
+    header a {display: none !important;} 
     #MainMenu {visibility: visible !important;}
     [data-testid="collapsedControl"] {visibility: visible !important;}
+
+    /* 6. 🚨 REPARACIÓN DEL BOTÓN DE CERRAR SESIÓN */
+    [data-testid="stSidebar"] .stButton > button {
+        background-color: #1a365d !important;
+        color: #d4af37 !important;
+        border: 1px solid #d4af37 !important;
+        font-weight: bold !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover {
+        background-color: #d4af37 !important;
+        color: #0d1b2a !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -98,9 +122,9 @@ def mostrar_login(supabase):
     
     with col2:
         st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("""
+        st.markdown(f"""
         <div style='text-align: center; margin-bottom: 10px;'>
-            <img src="https://raw.githubusercontent.com/ComandanteDavidAGH/genesis-portal-estudiantil/main/escudo.png" width="140" style="filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.3));">
+            <img src="{escudo_seguro}" width="140" style="filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.3));">
         </div>
         """, unsafe_allow_html=True)
         
@@ -304,10 +328,10 @@ def main():
     if not st.session_state.autenticado:
         mostrar_login(supabase)
     else:
-        # --- CONFIGURACIÓN DEL MENÚ LATERAL TÁCTICO CON ESCUDO ---
+        # --- CONFIGURACIÓN DEL MENÚ LATERAL TÁCTICO CON ESCUDO LOCAL ---
         st.sidebar.markdown(f"""
         <div style="text-align: center; color: white;">
-            <img src="https://raw.githubusercontent.com/ComandanteDavidAGH/genesis-portal-estudiantil/main/escudo.png" width="90" style="margin-bottom: 10px; filter: drop-shadow(0px 2px 5px rgba(212,175,55,0.4));">
+            <img src="{escudo_seguro}" width="90" style="margin-bottom: 10px; filter: drop-shadow(0px 2px 5px rgba(212,175,55,0.4));">
             <p style="font-size: 22px; font-family: 'Arial Black', sans-serif; color: #d4af37; margin-bottom: 0; line-height: 1;">GÉNESIS</p>
             <p style="font-size: 13px; margin-top: 0; color: #a8b2d1;">ZONA ESCOLAR</p>
             <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
