@@ -194,7 +194,7 @@ def seccion_boletin(supabase):
     st.dataframe(df_pintado, use_container_width=True, hide_index=True)
 
 # =================================================================
-# 📄 MÓDULO 2: ZONA DE DESCARGAS (Placeholders)
+# 📄 MÓDULO 2: ZONA DE DESCARGAS (Estilo Premium 2026)
 # =================================================================
 def seccion_descargas():
     st.markdown("<h2 class='titulo-seccion'>📄 Zona de Descargas</h2>", unsafe_allow_html=True)
@@ -203,17 +203,26 @@ def seccion_descargas():
     col1, col2 = st.columns(2)
     
     with col1:
-        with st.container(border=True):
-            st.markdown("#### 📕 Manual de Convivencia")
-            st.info("Formato PDF. Última actualización: Enero 2024.")
-            st.button("⏬ Descargar Manual", key="btn_manual", use_container_width=True)
+        # Tarjeta con el estilo HUD (Azul Oscuro y Dorado)
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%); padding:20px; border-radius:8px; border-left:5px solid #d4af37; text-align:center; box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 10px;'>
+            <h3 style='color:#d4af37; font-family:Arial Black; font-size:16px; margin-top:0;'>📕 MANUAL DE CONVIVENCIA</h3>
+            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Documento oficial en PDF. Lineamientos institucionales.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        # Botón de Descarga
+        st.button("⏬ Descargar Manual", key="btn_manual", use_container_width=True)
             
     with col2:
-        with st.container(border=True):
-            st.markdown("#### 📜 Cronograma Académico 2024")
-            st.info("Fechas de exámenes, vacaciones y entregas.")
-            st.button("⏬ Descargar Cronograma", key="btn_crono", use_container_width=True)
-
+        # Tarjeta con el estilo HUD (Azul Oscuro y Dorado)
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%); padding:20px; border-radius:8px; border-left:5px solid #d4af37; text-align:center; box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 10px;'>
+            <h3 style='color:#d4af37; font-family:Arial Black; font-size:16px; margin-top:0;'>📜 CRONOGRAMA 2026</h3>
+            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Fechas de exámenes, vacaciones y entrega de boletines.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        # Botón de Descarga
+        st.button("⏬ Descargar Cronograma", key="btn_crono", use_container_width=True)
 # =================================================================
 # 🔔 MÓDULO 3: AVISOS (Placeholders)
 # =================================================================
