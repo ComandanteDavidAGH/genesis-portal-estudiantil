@@ -330,9 +330,17 @@ def main():
         if st.sidebar.button("Cerrar Sesión", type="secondary", use_container_width=True):
             cerrar_sesion()
 
-        # 🏛️ FOOTER 2026 SANITIZADO Y BLINDADO
+        # FOOTER 2026 SANITIZADO Y BLINDADO
         st.sidebar.markdown("""
         <div style="position: fixed; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #6c757d;">
             &copy; Agroa&eacute;reo T&aacute;ctico 2026<br>G&eacute;nesis v1.0.Omega
         </div>
         """, unsafe_allow_html=True)
+
+        # --- ENRUTADOR DE SECCIONES ---
+        if menu_principal == "Mi Boletín": seccion_boletin(supabase)
+        elif menu_principal == "Descargas": seccion_descargas()
+        elif menu_principal == "Avisos": seccion_avisos()
+
+if __name__ == "__main__":
+    main()
