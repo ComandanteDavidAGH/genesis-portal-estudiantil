@@ -331,7 +331,7 @@ def main():
             cerrar_sesion()
 
         # 🏛️ FOOTER 2026 SANITIZADO Y BLINDADO
-        st.sidebar.markdown(f"""
+        st.sidebar.markdown("""
         <div style="position: fixed; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #6c757d;">
             &copy; Agroa&eacute;reo T&aacute;ctico 2026<br>G&eacute;nesis v1.0.Omega
         </div>
