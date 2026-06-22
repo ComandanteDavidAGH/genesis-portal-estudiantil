@@ -51,7 +51,7 @@ def ejecutar():
     try:
         supabase = iniciar_conexion()
     except Exception as e:
-        st.error(f"🚨 Falla en el enlace satelital con Supabase. ERROR REAL: {e}")
+        st.error(f"🚨 Falla en el enlace satelital con Supabase: {e}")
         return
 
     # 🔑 PASO 1: BÚNKER DE ACCESO POR DOCUMENTO
@@ -59,45 +59,47 @@ def ejecutar():
         st.markdown("#### 🔒 Control de Identidad Estudiantil")
         c_id, c_btn = st.columns([3, 1])
         
-        # El estudiante ingresa su número de identificación
-        documento_ingresado = c_id.text_input("💳 Ingrese su Documento de Identidad o ID:", placeholder="Digite su número sin puntos ni espacios").strip()
+        # El estudiante ingresa su número (Ej: EST-001)
+        documento_ingresado = c_id.text_input("💳 Ingrese su Documento de Identidad o ID:", placeholder="Ejemplo: EST-001").strip().upper()
         
         st.markdown("<br>", unsafe_allow_html=True)
         autenticar = c_btn.button("📡 Acceder al Sistema", type="primary", use_container_width=True)
 
-    # Si presiona el botón o ya ingresó el documento
     if documento_ingresado:
         with st.spinner("Verificando credenciales en el búnker central..."):
             try:
-                # 📡 ESCÁNER 1: Buscamos al estudiante por su documento/ID en data_estudiantes
-                # Nota: Si tu columna en Supabase se llama diferente (ej: 'id', 'cedula'), cambia "Documento" por ese nombre
-                # Esta línea extrae TODO sobre el estudiante: su nombre, su grado y todas sus materias con notas
-                respuesta_bd = supabase.table("data_estudiantes").select("Nombre_Completo, Grado, Grupo, Materia, P1, P2, P3, P4").eq("ID_Estudiante", documento_ingresado).execute()
+                # 📡 ESCÁNER 1: Buscamos al estudiante por su ID exacto
+                res_estudiante = supabase.table("data_estudiantes").select("Nombre_Completo, Grado").eq("ID_Estudiante", documento_ingresado).execute()
                 alumno_data = res_estudiante.data
             except Exception as e:
                 st.error(f"🚨 Error en el escáner de identidad: {e}")
                 return
 
         if not alumno_data:
-            st.error("❌ DOCUMENTO NO REGISTRADO. Verifique el número o acérquese a Secretaría.")
+            st.error(f"❌ EL ID '{documento_ingresado}' NO ESTÁ REGISTRADO. Verifique si lleva mayúsculas o guiones.")
             return
 
-        # 🎯 EXTRACCIÓN DE COORDENADAS PERSONALES (Cero selectores abiertos, el sistema ya sabe quién es)
+        # 🎯 EXTRACCIÓN DE IDENTIDAD
         nombre_estudiante = str(alumno_data[0]["Nombre_Completo"]).strip().upper()
         grado_estudiante = str(alumno_data[0]["Grado"]).strip().upper()
 
-        # Configuración de selectores informativos visuales fijados (Modo Solo Lectura)
         st.markdown("### 📋 Coordenadas del Estudiante")
         cs1, cs2 = st.columns(2)
         cs1.selectbox("👤 Estudiante Autenticado:", [nombre_estudiante], disabled=True)
         cs2.selectbox("👥 Curso / Grado Asignado:", [grado_estudiante], disabled=True)
 
-        # 🔑 PASO 2: EXTRACCIÓN DE CALIFICACIONES PERSONALES
+        # 🔑 PASO 2: EXTRACCIÓN DE CALIFICACIONES
         with st.spinner("Descargando historial de notas consolidado..."):
             try:
-                # Buscamos en la tabla de notas consolidadas que coincida exactamente con su nombre
+                # Primero buscamos en la tabla principal de notas
                 respuesta_notas = supabase.table("notas_consolidadas").select("*").eq("NOMBRE_COMPLETO", nombre_estudiante).execute()
                 datos_notas = respuesta_notas.data
+                
+                # PLAN B: Si no hay notas consolidadas, sacamos las notas preliminares de data_estudiantes (lo que vi en tus fotos)
+                if not datos_notas:
+                    res_respaldo = supabase.table("data_estudiantes").select("*").eq("ID_Estudiante", documento_ingresado).execute()
+                    datos_notas = res_respaldo.data
+
             except Exception as e:
                 st.error(f"🚨 Error al descargar boletín: {e}")
                 return
@@ -108,9 +110,21 @@ def ejecutar():
 
         # Procesamos las notas en Pandas
         df_notas = pd.DataFrame(datos_notas)
-        columnas_mostrar = ['ASIGNATURA', 'P1', 'P2', 'P3', 'P4', 'PROMEDIO', 'DESEMPEÑO']
+        
+        # Unificamos el nombre de columnas a mayúsculas para evitar problemas (Materia vs MATERIA vs ASIGNATURA)
+        df_notas.columns = [str(c).upper() for c in df_notas.columns]
+        
+        columnas_mostrar = ['ASIGNATURA', 'MATERIA', 'P1', 'P2', 'P3', 'P4', 'PROMEDIO', 'DESEMPEÑO']
         columnas_reales = [col for col in columnas_mostrar if col in df_notas.columns]
         df_mostrar = df_notas[columnas_reales].copy()
+
+        # Si el profesor aún no calcula el PROMEDIO, el sistema lo calcula en vivo
+        if 'PROMEDIO' not in df_mostrar.columns:
+            cols_promedio = [c for c in ['P1', 'P2', 'P3', 'P4'] if c in df_mostrar.columns]
+            if cols_promedio:
+                for c in cols_promedio:
+                    df_mostrar[c] = pd.to_numeric(df_mostrar[c], errors='coerce').fillna(0.0)
+                df_mostrar['PROMEDIO'] = df_mostrar[cols_promedio].mean(axis=1).round(1)
 
         # 🧮 CÓMPUTO DE RENDIMIENTO VIP HÚD
         if 'PROMEDIO' in df_mostrar.columns:
