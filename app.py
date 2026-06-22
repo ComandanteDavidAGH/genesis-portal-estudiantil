@@ -13,7 +13,6 @@ def iniciar_conexion():
 
 def ejecutar():
     # 🚀 MOTOR VISUAL PREMIUM CON CONTORNOS INTEGRADOS
-    st.markdown("""
     <style>
     [data-testid="stDataFrame"] {
         border-left: 3px solid #0d1b2a !important;
@@ -25,6 +24,8 @@ def ejecutar():
         box-shadow: 0px 5px 15px rgba(0,0,0,0.15) !important;
         overflow: hidden !important;
     }
+    
+    /* CAJA PRINCIPAL (Cuadrícula perfecta) */
     .hud-box {
         background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%);
         border-left: 5px solid #d4af37;
@@ -39,6 +40,13 @@ def ejecutar():
         border-right: 1px solid rgba(255,255,255,0.1);
     }
     .hud-item:last-child { border-right: none; }
+    
+    /* LUCES ENCENDIDAS PARA LOS TEXTOS (Brillo y Color) */
+    .hud-title { font-size: 11px; color: #a8b2d1; font-family: 'Arial Black', sans-serif; text-transform: uppercase; margin: 0; letter-spacing: 1px; }
+    .hud-value { font-size: 24px; color: #ffffff; font-weight: 900; margin: 0; font-family: Arial, sans-serif; }
+    .hud-value-gold { color: #d4af37; }
+    .hud-value-green { color: #00ff66; }
+    .hud-value-red { color: #ff3333; }
     </style>
     """, unsafe_allow_html=True)
 
