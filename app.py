@@ -48,6 +48,12 @@ def ejecutar():
     .hud-value-gold { color: #d4af37; }
     .hud-value-green { color: #00ff66; }
     .hud-value-red { color: #ff3333; }
+    
+    /* 🚫 OPERACIÓN CAMUFLAJE: ELIMINAR EL GATO, MENÚ Y FOOTER */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
     </style>
     """, unsafe_allow_html=True)
     # ==========================================
