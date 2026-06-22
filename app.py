@@ -64,16 +64,23 @@ st.markdown("""
     /* 4. Títulos Globales Estilizados */
     .titulo-seccion { color: #0d1b2a; font-family: 'Arial Black', sans-serif; border-bottom: 2px solid #d4af37; padding-bottom: 5px; }
 
-    # EJEMPLO DE CÓMO SE VE TU CÓDIGO ACTUAL (No lo copies, búscalo)
-ocultar_elementos = """
+    # =================================================================
+# ⚙️ INYECCIÓN CSS: CAMUFLAJE Y VISIBILIDAD (Ajustado)
+# =================================================================
+estilo_ajustado = """
     <style>
-    #MainMenu {visibility: hidden;}
+    /* Ocultar solo el footer por defecto de Streamlit */
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    
+    /* Asegurar que el menú hamburguesa principal sea visible */
+    #MainMenu {visibility: visible;}
+    [data-testid="collapsedControl"] {visibility: visible;}
+    
+    /* Ocultar el botón de "Deploy" que a veces aparece al lado del menú */
+    .stDeployButton {display:none;}
     </style>
 """
-st.markdown(ocultar_elementos, unsafe_allow_html=True)
-
+st.markdown(estilo_ajustado, unsafe_allow_html=True)
 # =================================================================
 # 🔒 ENLACE AL BÚNKER DE DATOS (Supabase)
 # =================================================================
