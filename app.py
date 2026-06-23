@@ -1,115 +1,123 @@
 import streamlit as st
+import pandas as pd
+from supabase import create_client
 import time
 import base64
-from supabase import create_client, Client
 
 # =================================================================
-# ⚡ CONFIGURACIÓN DE PÁGINA (Debe ser el primer comando de Streamlit)
+# ⚡ CONFIGURACIÓN DE PÁGINA E IDENTIDAD OMEGA
 # =================================================================
-st.set_page_config(
-    page_title="Génesis - Zona Escolar",
-    page_icon="🛡️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="Génesis - Zona Escolar", page_icon="🎓", layout="wide")
 
-# =================================================================
-# ⚙️ 1. OPTIMIZACIÓN DE VELOCIDAD: CONEXIÓN CACHEDA A SUPABASE
-# =================================================================
-@st.cache_resource
-def inicializar_conexion():
-    try:
-        url = st.secrets["SUPABASE_URL"]
-        key = st.secrets["SUPABASE_KEY"]
-        return create_client(url, key)
-    except Exception as e:
-        st.error(f"Error crítico de configuración de llaves: {e}")
-        return None
-
-supabase = inicializar_conexion()
-
-# =================================================================
-# 🖼️ 2. OPTIMIZACIÓN DE VELOCIDAD: PROCESAMIENTO ÚNICO DE IMAGEN
-# =================================================================
-@st.cache_data
-def cargar_escudo_base64():
-    try:
-        with open("escudo.png", "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode()
-            return f"data:image/png;base64,{encoded_string}"
-    except Exception:
-        # Fallback de emergencia si la imagen local no se encuentra
-        return "https://via.placeholder.com/140"
-
-escudo_seguro = cargar_escudo_base64()
-
-# =================================================================
-# ⚡ 3. CACHÉ DE DATOS ACADÉMICOS (Adiós a los 30 segundos de espera)
-# =================================================================
-@st.cache_data
-def descargar_toda_la_data():
-    if not supabase:
-        return []
-    try:
-        respuesta = supabase.table("data_estudiantes").select("*").execute()
-        return respuesta.data
-    except Exception as e:
-        st.error(f"Error al sincronizar datos: {e}")
-        return []
-
-# Carga masiva en caché ultrarrápida
-toda_la_data = descargar_toda_la_data()
-
-# =================================================================
-# 🎨 4. DISEÑO CORPORATIVO Y OCULTAMIENTO DE ICONOS INVASORES (GATO/SHARE)
-# =================================================================
-st.markdown("""
-<style>
-    /* Ocultar barra de herramientas nativa de Streamlit (Gato GitHub, Estrella, Lápiz, Share) */
-    footer {visibility: hidden !important;}
-    [data-testid="stToolbarActions"] {display: none !important;}
-    [data-testid="stToolbarShareButton"] {display: none !important;}
-    header {visibility: hidden !important;}
-    
-    /* Personalización del Menú Lateral */
-    [data-testid="stSidebar"] {
-        background-color: #0d1b2a !important;
-        color: #ffffff !important;
-    }
-    [data-testid="stSidebar"] * {
-        color: #ffffff !important;
-    }
-    
-    /* Estilización del Botón de Cerrar Sesión Contractado (Oro e Institucional) */
-    .stButton>button {
-        background-color: #d4af37 !important;
-        color: #0d1b2a !important;
-        font-weight: bold !important;
-        border: 2px solid #d4af37 !important;
-        border-radius: 5px !important;
-        transition: all 0.3s ease;
-    }
-    .stButton>button:hover {
-        background-color: #ffffff !important;
-        color: #0d1b2a !important;
-        border-color: #ffffff !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# =================================================================
-# 🔄 ESTADOS DE SESIÓN (Control de Estado de Logueo)
-# =================================================================
+# Inicializamos el estado de la sesión táctica
 if 'autenticado' not in st.session_state:
     st.session_state.autenticado = False
 if 'datos_alumno' not in st.session_state:
     st.session_state.datos_alumno = None
 
+# --- 🖼️ OPTIMIZACIÓN DE VELOCIDAD: MOTOR DE CARGA LOCAL (Base64) ---
+@st.cache_data
+def cargar_escudo_local():
+    try:
+        with open("escudo.png", "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+        return f"data:image/png;base64,{encoded_string}"
+    except Exception:
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+
+escudo_seguro = cargar_escudo_local()
+
+# --- ⚙️ OPTIMIZACIÓN DE VELOCIDAD: CONEXIÓN ÚNICA A SUPABASE ---
+@st.cache_resource(show_spinner=False)
+def iniciar_conexion():
+    url = st.secrets["SUPABASE_URL"].strip()
+    key = st.secrets["SUPABASE_KEY"].strip()
+    return create_client(url, key)
+
+# --- Inyección de Estilos Omega Pro y Control de la Hamburguesa ---
+st.markdown("""
+<style>
+    /* 1. Blindaje Principal y Contornos de Tabla */
+    [data-testid="stDataFrame"] {
+        border-left: 3px solid #0d1b2a !important;
+        border-right: 3px solid #0d1b2a !important;
+        border-bottom: 3px solid #0d1b2a !important;
+        border-top: none !important;
+        border-radius: 0 0 8px 8px !important;
+        margin-top: -10px !important; 
+        box-shadow: 0px 5px 15px rgba(0,0,0,0.15) !important;
+    }
+    
+    /* 2. Estilos del HUD (Panel Superior) */
+    .hud-box {
+        background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%);
+        border-left: 5px solid #d4af37;
+        padding: 15px; border-radius: 8px; 
+        display: grid; 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 15px;
+        box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 20px;
+    }
+    .hud-item { text-align: center; border-right: 1px solid rgba(255,255,255,0.1); }
+    .hud-item:last-child { border-right: none; }
+    .hud-title { font-size: 11px; color: #a8b2d1; font-family: 'Arial Black', sans-serif; text-transform: uppercase; margin: 0; letter-spacing: 1px; }
+    .hud-value { font-size: 24px; color: #ffffff; font-weight: 900; margin: 0; font-family: Arial, sans-serif; }
+    .hud-value-gold { color: #d4af37; }
+    .hud-value-green { color: #00ff66; }
+    .hud-value-red { color: #ff3333; }
+
+    /* 3. Estilos del Panel Lateral (Sidebar Institucional) */
+    [data-testid="stSidebar"] {
+        background-color: #0d1b2a;
+        color: white;
+        border-right: 2px solid #d4af37;
+    }
+    [data-testid="stSidebar"] * { color: white !important; }
+    [data-testid="stSidebar"] .stRadio > label {
+        color: #d4af37 !important;
+        font-family: 'Arial Black', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    /* 4. Títulos Globales Estilizados */
+    .titulo-seccion { color: #0d1b2a; font-family: 'Arial Black', sans-serif; border-bottom: 2px solid #d4af37; padding-bottom: 5px; }
+
+    /* 5. 🚫 OPERACIÓN FRANCOTIRADOR: FULMINAR AL GATO Y TOOLBAR CLOUD */
+    footer {visibility: hidden !important;}
+    [data-testid="stToolbarActions"] {display: none !important;}
+    [data-testid="stToolbarShareButton"] {display: none !important;}
+    .stActionButton {display: none !important;}
+    header a {display: none !important;} 
+    #MainMenu {visibility: visible !important;}
+    [data-testid="collapsedControl"] {visibility: visible !important;}
+
+    /* 6. 🚨 REPARACIÓN DEL BOTÓN DE CERRAR SESIÓN */
+    [data-testid="stSidebar"] .stButton > button {
+        background-color: #1a365d !important;
+        color: #d4af37 !important;
+        border: 1px solid #d4af37 !important;
+        font-weight: bold !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover {
+        background-color: #d4af37 !important;
+        color: #0d1b2a !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+def cerrar_sesion():
+    st.session_state.autenticado = False
+    st.session_state.datos_alumno = None
+    st.clear_cache() # Limpia caché al salir para máxima seguridad
+    st.rerun()
+
 # =================================================================
-# 🛡️ PANTALLA DE LOGUEO INTELIGENTE Y SEGURO
+# 🛡️ PANTALLA DE LOGUEO INTELIGENTE (Bypass Maestro Incorporado)
 # =================================================================
-def mostrar_login():
+def mostrar_login(supabase):
     col1, col2, col3 = st.columns([1, 1.5, 1])
+    
     with col2:
         st.markdown("<br><br>", unsafe_allow_html=True)
         st.markdown(f"""
@@ -124,104 +132,281 @@ def mostrar_login():
         with st.container(border=True):
             st.markdown("#### Control de Acceso")
             doc_ingresado = st.text_input("Ingrese su ID Estudiantil o Código Maestro:", placeholder="Ej: 001").strip()
+            
             autenticar = st.button("Acceder a Zona Escolar", type="primary", use_container_width=True)
             
             if autenticar and doc_ingresado:
-                clave_secreta = st.secrets.get("CODIGO_MAESTRO", "ADMIN_FALLBACK_2026").strip()
-                
-                # Acceso Administrador Supremo (Saltando Base de Datos)
-                if doc_ingresado == clave_secreta:
-                    st.session_state.autenticado = True
-                    st.session_state.datos_alumno = {
-                        'Nombre_Completo': "OPERADOR / ADMIN GENERAL",
-                        'Grado': "ADMIN CORE",
-                        'ID_Estudiante': "ADMIN"
-                    }
-                    st.success("🔓 Acceso de Administrador General Concedido")
-                    time.sleep(0.5)
-                    st.rerun()
-                else:
-                    # Búsqueda instantánea en la caché cargada
-                    alumno_found = [a for a in toda_la_data if str(a.get('ID_Estudiante')).lower() == doc_ingresado.lower()]
-                    if alumno_found:
+                with st.spinner("Escaneando credenciales..."):
+                    
+                    # 🔐 EXTRACCIÓN SEGURA DEL CÓDIGO MAESTRO DESDE LOS SECRETOS
+                    clave_secreta = st.secrets.get("CODIGO_MAESTRO", "ADMIN_FALLBACK_2026").strip()
+                    
+                    # 🔑 INTERCEPCIÓN TÁCTICA: SI COINCIDE CON TU CONTRASEÑA DE LOS SECRETOS
+                    if doc_ingresado == clave_secreta:
                         st.session_state.autenticado = True
-                        st.session_state.datos_alumno = alumno_found[0]
-                        st.success(f"Acceso concedido a {alumno_found[0]['Nombre_Completo']}")
+                        st.session_state.datos_alumno = {
+                            'Nombre_Completo': "OPERADOR / ADMIN GENERAL",
+                            'Grado': "ADMIN CORE",
+                            'ID_Estudiante': "MASTER_CONTROL" # Identificador crítico de superusuario
+                        }
+                        st.success("🔓 Acceso de Administrador General Concedido")
                         time.sleep(0.5)
                         st.rerun()
+                    
+                    # 📡 RUTA ESTÁNDAR: BÚSQUEDA DE ESTUDIANTES EN LA BASE DE DATOS
                     else:
-                        st.error("Credencial inválida o no registrada.")
+                        try:
+                            respuesta = supabase.table("data_estudiantes").select("Nombre_Completo, Grado, ID_Estudiante").ilike("ID_Estudiante", f"%{doc_ingresado}%").limit(1).execute()
+                            alumno_found = respuesta.data
+                            
+                            if alumno_found:
+                                st.session_state.autenticado = True
+                                st.session_state.datos_alumno = alumno_found[0]
+                                st.success(f"Acceso concedido a {alumno_found[0]['Nombre_Completo']}")
+                                time.sleep(0.5)
+                                st.rerun()
+                            else:
+                                st.error("Credencial inválida o no registrada.")
+                        except Exception as e:
+                            st.error(f"Falla en escáner: {e}")
 
 # =================================================================
-# 🌌 ENTORNO DE OPERACIÓN PRINCIPAL (Una vez logueado)
+# 📊 MÓDULO 1: ENTORNO ACADÉMICO (Adaptativo e Inteligente)
 # =================================================================
-if not st.session_state.autenticado:
-    mostrar_login()
-else:
-    alumno = st.session_state.datos_alumno
-    es_admin = (alumno['ID_Estudiante'] == "ADMIN")
+def seccion_boletin(supabase):
+    st.markdown("<h2 class='titulo-seccion'>&#x1F4CA; Mi Boletín de Calificaciones</h2>", unsafe_allow_html=True)
     
-    # 📌 PANEL LATERAL DE SEGUIMIENTO
-    with st.sidebar:
-        st.markdown(f"""
-        <div style='text-align: center;'>
-            <img src="{escudo_seguro}" width="90">
-            <h3 style='margin-bottom: 2px;'>GÉNESIS</h3>
-            <p style='color: #d4af37; font-size: 12px; font-weight: bold; margin-top: 0;'>ZONA ESCOLAR</p>
+    # Verificamos si quien está adentro es el Administrador Maestro
+    es_admin_supremo = (st.session_state.datos_alumno['ID_Estudiante'] == "MASTER_CONTROL")
+    
+    if es_admin_supremo:
+        st.info("💡 MODO INSPECTOR SUPREMO ACTIVADO: Seleccione un estudiante para auditar su boletín oficial en tiempo real.")
+        
+        with st.spinner("Sincronizando registros estudiantiles generales..."):
+            try:
+                # Descargamos la lista completa de alumnos para tu selector dinámico
+                alumnos_req = supabase.table("data_estudiantes").select("Nombre_Completo, ID_Estudiante").execute()
+                lista_alumnos = alumnos_req.data
+            except Exception as e:
+                st.error(f"Error al enlazar lista de alumnos: {e}")
+                return
+        
+        if not lista_alumnos:
+            st.warning("No hay estudiantes registrados en la base de datos de Supabase.")
+            return
+            
+        # Creamos un diccionario para el selector dinámico de búsqueda
+        mapeo_alumnos = {item['Nombre_Completo']: item['ID_Estudiante'] for item in lista_alumnos}
+        alumno_seleccionado = st.selectbox("🎯 Buscar Estudiante en el Sistema Génesis:", list(mapeo_alumnos.keys()))
+        
+        # Asignamos el ID del estudiante elegido al flujo de renderizado de la tabla
+        id_táctica = mapeo_alumnos[alumno_seleccionado]
+    else:
+        # Si es un alumno normal, el ID de búsqueda es su propio ID fijado
+        id_táctica = st.session_state.datos_alumno['ID_Estudiante']
+
+    # --- NÚCLEO RENDERIZADOR: RENDERIZA LA DATA DEL ALMUNO SELECCIONADO ---
+    with st.spinner("Procesando matriz de notas de forma acelerada..."):
+        try:
+            respuesta_notas = supabase.table("data_estudiantes").select("*").eq("ID_Estudiante", id_táctica).execute()
+            datos_notas = respuesta_notas.data
+        except Exception as e:
+            st.error(f"Error al descargar boletín: {e}")
+            return
+
+    if not datos_notas:
+        st.warning("Este estudiante no registra calificaciones en el periodo actual.")
+        return
+
+    # Procesamiento con Pandas
+    df_notas = pd.DataFrame(datos_notas)
+    df_notas.columns = [str(c).upper() for c in df_notas.columns] 
+    
+    cols_promedio = [c for c in ['P1', 'P2', 'P3', 'P4'] if c in df_notas.columns]
+    for c in cols_promedio:
+        df_notas[c] = pd.to_numeric(df_notas[c], errors='coerce').fillna(0.0)
+    
+    df_notas['PROMEDIO'] = df_notas[cols_promedio].mean(axis=1).round(1)
+    columnas_mostrar = ['MATERIA', 'P1', 'P2', 'P3', 'P4', 'PROMEDIO']
+    df_mostrar = df_notas[[c for c in columnas_mostrar if c in df_notas.columns]].copy()
+    
+    promedio_general = df_notas['PROMEDIO'].mean()
+    promedio_redondeado = round(promedio_general, 1) 
+    materias_aprobadas = len(df_notas[df_notas['PROMEDIO'] >= 6.0])
+    total_materias = len(df_notas)
+    
+    color_promedio = "hud-value-green" if promedio_general >= 9.0 else ("hud-value-gold" if promedio_general >= 6.0 else "hud-value-red")
+
+    # 📊 PANEL HUD PREMIUM (Refleja al alumno seleccionado de manera instantánea)
+    st.markdown(f"""
+    <div class="hud-box">
+        <div class="hud-item"><p class="hud-title">Estatus Académico</p><p class="hud-value hud-value-gold">AUDITORÍA</p></div>
+        <div class="hud-item"><p class="hud-title">Promedio General Anual</p><p class="hud-value {color_promedio}">{promedio_redondeado}</p></div>
+        <div class="hud-item"><p class="hud-title">Asignaturas Ganadas</p><p class="hud-value">{materias_aprobadas} / {total_materias}</p></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    def pintar_celdas(val):
+        try:
+            n = float(val)
+            if n < 6.0: return 'color: #cc0000; font-weight: bold; background-color: #ffe6e6;'
+            elif n >= 9.0: return 'color: #00994c; font-weight: bold; background-color: #e6ffe6;'
+            return 'color: #0d1b2a; font-weight: bold;'
+        except: return ''
+
+    cols_num = [c for c in ['P1', 'P2', 'P3', 'P4', 'PROMEDIO'] if c in df_mostrar.columns]
+    df_pintado = df_mostrar.style.map(pintar_celdas, subset=cols_num).format("{:.1f}", subset=cols_num)
+
+    st.markdown(f"<div style='background-color:#0d1b2a; color:#d4af37; font-family:Arial Black; font-size:13px; text-align:center; padding:10px; border:3px solid #0d1b2a; border-radius:8px 8px 0 0; position:relative; z-index:11; letter-spacing:1px;'>CUADRO ACADÉMICO OFICIAL: {alumno_seleccionado if es_admin_supremo else st.session_state.datos_alumno['Nombre_Completo']}</div>", unsafe_allow_html=True)
+    st.dataframe(df_pintado, use_container_width=True, hide_index=True)
+
+# =================================================================
+# 📄 MÓDULO 2: ZONA DE DESCARGAS Y DOCUMENTOS
+# =================================================================
+def seccion_descargas():
+    st.markdown("<h2 class='titulo-seccion'>&#x1F4C4; Documentación Institucional</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #6c757d; font-size: 14px;'>Consulte los lineamientos y fechas clave del periodo lectivo 2026.</p>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%); padding:20px; border-radius:8px; border-left:5px solid #d4af37; text-align:center; box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 10px;'>
+            <h3 style='color:#d4af37; font-family:Arial Black; font-size:16px; margin-top:0;'>&#x1F4D5; MANUAL DE CONVIVENCIA</h3>
+            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Marco legal, derechos y deberes del estudiante Génesis.</p>
         </div>
-        <hr style='border-color: #d4af37; margin: 10px 0;'>
         """, unsafe_allow_html=True)
         
-        st.markdown(f"**ROL / ESTUDIANTE:**<br><span style='color: #d4af37; font-weight: bold;'>{alumno['Nombre_Completo']}</span>", unsafe_allow_html=True)
-        st.markdown(f"**CURSO / ASIGNACIÓN:**<br>{alumno['Grado']}")
-        st.markdown("<br>", unsafe_allow_html=True)
-        
-        # MENÚ TÁCTICO DE NAVEGACIÓN
-        opcion = st.radio("MENÚ DE NAVEGACIÓN", ["Mi Boletín", "Descargas", "Avisos"])
-        
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        if st.button("Cerrar Sesión", use_container_width=True):
-            st.session_state.autenticado = False
-            st.session_state.datos_alumno = None
-            st.rerun()
-
-    # 📌 ÁREA DE DESPLIEGUE CENTRAL (Dependiendo de la opción elegida)
-    if opcion == "Mi Boletín":
-        st.markdown(f"## 📊 {opcion}")
-        
-        # 👑 COMPORTAMIENTO ADAPTADO PARA EL ADMINISTRADOR SUPREMO
-        if es_admin:
-            st.info("💡 Modo Inspector General Activado. Puede auditar la información de cualquier estudiante.")
+        with st.expander("Ver Artículos Principales (Vista Rápida)"):
+            st.markdown("""
+            **Normativa Académica y Disciplinaria 2026:**
+            * **Jornada Académica:** Ingreso a las 6:30 AM. Retardos injustificados afectarán la nota de convivencia.
+            * **Presentación Personal:** Uso estricto del uniforme oficial según el cronograma semanal. No se permiten alteraciones.
+            * **Dispositivos Electrónicos:** Restringidos durante bloques académicos salvo autorización expresa del docente.
+            * **Faltas Tipo I, II y III:** Tipificadas en el Capítulo IV. Toda acción que vulnere la integridad será sancionada.
+            """)
             
-            if toda_la_data:
-                # 1. Selector de Grados Únicos
-                grados_disponibles = sorted(list(set([str(a.get('Grado')) for a in toda_la_data])))
-                grado_seleccionado = st.selectbox("Seleccione el Grado a Inspeccionar:", grados_disponibles)
-                
-                # 2. Filtrar Alumnos del Grado Seleccionado
-                alumnos_filtrados = [a for a in toda_la_data if str(a.get('Grado')) == grado_seleccionado]
-                nombres_alumnos = {a['Nombre_Completo']: a for a in alumnos_filtrados}
-                
-                alumno_seleccionado_nombre = st.selectbox("Seleccione el Alumno para ver su Boletín:", list(nombres_alumnos.keys()))
-                
-                # Datos del alumno auditado en tiempo real
-                datos_auditoria = nombres_alumnos[alumno_seleccionado_nombre]
-                
-                # Desplegar Boletín del alumno seleccionado de forma inmediata
-                st.markdown(f"### 📋 Historial Académico de: {datos_auditoria['Nombre_Completo']}")
-                st.json(datos_auditoria) # Cambia esto por tus tablas estéticas de notas
-            else:
-                st.warning("No hay registros en la base de datos para mostrar en este momento.")
-                
-        else:
-            # 🎒 VISTA ESTÁNDAR PARA EL ESTUDIANTE COMÚN
-            st.markdown(f"### 📋 Historial de Calificaciones de {alumno['Nombre_Completo']}")
-            st.json(alumno) # Aquí despliegas tus tablas específicas
+        st.download_button(
+            label="Descargar Manual en PDF",
+            data=b"Archivo no disponible temporalmente",
+            file_name="Manual_Convivencia_Genesis_2026.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+            
+    with col2:
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #0d1b2a 0%, #1a365d 100%); padding:20px; border-radius:8px; border-left:5px solid #d4af37; text-align:center; box-shadow: 2px 4px 10px rgba(0,0,0,0.3); margin-bottom: 10px;'>
+            <h3 style='color:#d4af37; font-family:Arial Black; font-size:16px; margin-top:0;'>&#x1F4DC; CRONOGRAMA LECTIVO 2026</h3>
+            <p style='color:#a8b2d1; font-size:13px; margin-bottom:0;'>Ruta académica, evaluaciones y comisiones de evaluación.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    elif opcion == "Descargas":
-        st.markdown(f"## 📥 {opcion}")
-        st.write("Zona de descargas de documentos institucionales y guías académicas.")
+        with st.expander("Ver Fechas Críticas (Vista Rápida)"):
+            st.markdown("""
+            **Hitos del Semestre Actual:**
+            * **Semana de Exámenes Parciales:** 15 al 19 de Marzo.
+            * **Corte de Notas / Plataforma:** 26 de Marzo.
+            * **Comisión de Evaluación y Promoción:** 2 de Abril.
+            * **Entrega de Boletines a Padres:** 9 de Abril.
+            * **Simulacro Tipo Estado:** 28 de Mayo.
+            """)
+        
+        st.download_button(
+            label="Descargar Cronograma PDF",
+            data=b"Archivo no disponible temporalmente",
+            file_name="Cronograma_Academico_Genesis_2026.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
 
-    elif opcion == "Avisos":
-        st.markdown(f"## 📢 {opcion}")
-        st.info("📌 **Comunicado Oficial:** Bienvenidos al tercer periodo académico del sistema Génesis v1.0 Omega.")
+# =================================================================
+# 🔔 MÓDULO 3: TABLERO DE AVISOS 
+# =================================================================
+def seccion_avisos():
+    st.markdown("<h2 class='titulo-seccion'>&#x1F514; Comunicados de Rectoría</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #6c757d; font-size: 14px;'>Información de última hora y directrices institucionales.</p>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    with st.container(border=True):
+        st.markdown("""
+        <div style="border-left: 5px solid #ff3333; padding-left: 10px;">
+            <h4 style="margin: 0; color: #0d1b2a;">&#x1F534; URGENTE: Asamblea General de Padres</h4>
+            <p style="margin-top: 5px; font-size: 14px;"><b>Fecha:</b> Viernes, 10 de Julio de 2026 | <b>Hora:</b> 6:30 AM.<br>
+            Se requiere asistencia de carácter obligatorio para socializar los resultados del periodo anterior.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    with st.container(border=True):
+        st.markdown("""
+        <div style="border-left: 5px solid #d4af37; padding-left: 10px;">
+            <h4 style="margin: 0; color: #0d1b2a;">&#x1F7E1; SIMULACRO DE EVALUACIONES OMR</h4>
+            <p style="margin-top: 5px; font-size: 14px;"><b>Objetivo:</b> Preparación para pruebas estandarizadas.<br>
+            La próxima semana se habilitará el uso de las nuevas hojas de respuesta OMR. Traer lápiz Mirado No. 2 y borrador.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    with st.container(border=True):
+        st.markdown("""
+        <div style="border-left: 5px solid #1a365d; padding-left: 10px;">
+            <h4 style="margin: 0; color: #0d1b2a;">&#x1F535; Plataforma Génesis Actualizada</h4>
+            <p style="margin-top: 5px; font-size: 14px;">Estimada comunidad, bienvenidos a la nueva interfaz del <b>Portal Académico Génesis v1.0 Omega</b>.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# =================================================================
+# 🏛️ MOTOR DE EJECUCIÓN PRINCIPAL
+# =================================================================
+def main():
+    try:
+        supabase = iniciar_conexion()
+    except Exception as e:
+        st.error(f"Falla en enlace satelital Supabase: {e}")
+        return
+
+    if not st.session_state.autenticado:
+        mostrar_login(supabase)
+    else:
+        # --- CONFIGURACIÓN DEL MENÚ LATERAL TÁCTICO CON ESCUDO LOCAL ---
+        st.sidebar.markdown(f"""
+        <div style="text-align: center; color: white;">
+            <img src="{escudo_seguro}" width="90" style="margin-bottom: 10px; filter: drop-shadow(0px 2px 5px rgba(212,175,55,0.4));">
+            <p style="font-size: 22px; font-family: 'Arial Black', sans-serif; color: #d4af37; margin-bottom: 0; line-height: 1;">GÉNESIS</p>
+            <p style="font-size: 13px; margin-top: 0; color: #a8b2d1;">ZONA ESCOLAR</p>
+            <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
+            <p style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #d4af37; margin:0;">Usuario:</p>
+            <p style="font-size: 13px; margin-bottom: 10px;">{st.session_state.datos_alumno['Nombre_Completo']}</p>
+            <p style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #d4af37; margin:0;">Rango:</p>
+            <p style="font-size: 13px; margin-bottom: 5px;">{st.session_state.datos_alumno['Grado']}</p>
+            <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
+        </div>
+        """, unsafe_allow_html=True)
+        
+        menu_principal = st.sidebar.radio(
+            "MENÚ DE NAVEGACIÓN",
+            ["Mi Boletín", "Descargas", "Avisos"]
+        )
+        
+        st.sidebar.markdown("<br><br><br><br>", unsafe_allow_html=True)
+        
+        if st.sidebar.button("Cerrar Sesión", type="secondary", use_container_width=True):
+            cerrar_sesion()
+
+        # FOOTER 2026 SANITIZADO Y BLINDADO
+        st.sidebar.markdown("""
+        <div style="position: fixed; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #6c757d;">
+            &copy; Agroa&eacute;reo T&aacute;ctico 2026<br>G&eacute;nesis v1.0.Omega
+        </div>
+        """, unsafe_allow_html=True)
+
+        if menu_principal == "Mi Boletín": seccion_boletin(supabase)
+        elif menu_principal == "Descargas": seccion_descargas()
+        elif menu_principal == "Avisos": seccion_avisos()
+
+if __name__ == "__main__":
+    main()
